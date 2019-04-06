@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 
@@ -80,4 +81,38 @@ public interface ComptabiliteDao {
      * @param pId l'id de l'écriture
      */
     void deleteEcritureComptable(Integer pId);
+
+    /**
+     * Recupération d'une séquence écriture comptable par code journal et annee (constituant de la PK)
+     * 
+     * @param journalCode
+     * @param annee
+     * @return
+     * @throws NotFoundException
+     */
+	SequenceEcritureComptable getSequenceEcritureComptableByJournalCodeAndAnnee(String journalCode, Integer annee) throws NotFoundException;
+
+    /**
+     * Recupération d'un journal comptable par code (PK)
+     * 
+     * @param journalCode
+     * @param annee
+     * @return
+     * @throws NotFoundException
+     */
+	JournalComptable getJournalComptableByCode(String code) throws NotFoundException;
+
+	/**
+	 * Insertion d'une séquence ecriture comptable en base de donnée
+	 * 
+	 * @param sequenceEcritureComptable
+	 */
+	void createSequenceEcritureComptable(SequenceEcritureComptable sequenceEcritureComptable);
+
+	/**
+	 * Mise à jour d'une séquence ecriture comptable en base de donnée
+	 * 
+	 * @param sequenceEcritureComptable
+	 */
+	void updateSequenceEcritureComptable(SequenceEcritureComptable sequenceEcritureComptable);
 }
