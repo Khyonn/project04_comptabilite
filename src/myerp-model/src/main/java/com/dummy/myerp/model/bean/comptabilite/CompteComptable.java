@@ -87,13 +87,7 @@ public class CompteComptable {
      * @return {@link CompteComptable} ou {@code null}
      */
     public static CompteComptable getByNumero(List<? extends CompteComptable> pList, Integer pNumero) {
-        CompteComptable vRetour = null;
-        for (CompteComptable vBean : pList) {
-            if (vBean != null && Objects.equals(vBean.getNumero(), pNumero)) {
-                vRetour = vBean;
-                break;
-            }
-        }
-        return vRetour;
+    	return pList.stream().filter(cc -> cc != null && Objects.equals(cc.getNumero(), pNumero))
+				.findFirst().orElse(null);
     }
 }

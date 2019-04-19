@@ -79,13 +79,7 @@ public class JournalComptable {
      * @return {@link JournalComptable} ou {@code null}
      */
     public static JournalComptable getByCode(List<? extends JournalComptable> pList, String pCode) {
-        JournalComptable vRetour = null;
-        for (JournalComptable vBean : pList) {
-            if (vBean != null && Objects.equals(vBean.getCode(), pCode)) {
-                vRetour = vBean;
-                break;
-            }
-        }
-        return vRetour;
+    	return pList.stream().filter(jc -> jc != null && Objects.equals(jc.getCode(), pCode))
+    			.findFirst().orElse(null);
     }
 }

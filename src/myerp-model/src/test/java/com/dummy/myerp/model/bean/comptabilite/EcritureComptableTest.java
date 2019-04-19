@@ -39,5 +39,30 @@ public class EcritureComptableTest {
 		vEcriture.getListLigneEcriture().add(this.createLigne(2, "1", "2"));
 		Assert.assertFalse(vEcriture.toString(), vEcriture.isEquilibree());
 	}
+	
+	@Test
+	public void testTotalDebit() {
+		EcritureComptable vEcriture;
+		vEcriture = new EcritureComptable();
+		LigneEcritureComptable vLigneEcritureComptable = this.createLigne(1, null, null);
+		vLigneEcritureComptable.setDebit(null);
 
+		vEcriture.getListLigneEcriture().add(this.createLigne(1, "150.00", "250"));
+		vEcriture.getListLigneEcriture().add(this.createLigne(1, "350", null));
+		vEcriture.getListLigneEcriture().add(vLigneEcritureComptable);
+		Assert.assertEquals(new BigDecimal("500.00"), vEcriture.getTotalDebit());
+	}
+	
+	@Test
+	public void testTotalCredit() {
+		EcritureComptable vEcriture;
+		vEcriture = new EcritureComptable();
+		LigneEcritureComptable vLigneEcritureComptable = this.createLigne(1, null, null);
+		vLigneEcritureComptable.setCredit(null);
+
+		vEcriture.getListLigneEcriture().add(this.createLigne(1, "250", "150.00"));
+		vEcriture.getListLigneEcriture().add(this.createLigne(1, null, "350"));
+		vEcriture.getListLigneEcriture().add(vLigneEcritureComptable);
+		Assert.assertEquals(new BigDecimal("500.00"), vEcriture.getTotalCredit());
+	}
 }
