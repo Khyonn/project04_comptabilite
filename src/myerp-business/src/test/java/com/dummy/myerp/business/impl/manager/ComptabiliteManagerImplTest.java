@@ -1,19 +1,56 @@
 package com.dummy.myerp.business.impl.manager;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.dummy.myerp.business.impl.BusinessProxyImpl;
+import com.dummy.myerp.business.impl.TransactionManager;
+import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
+import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.consumer.dao.impl.db.dao.ComptabiliteDaoImpl;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
+import com.dummy.myerp.technical.exception.NotFoundException;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplTest {
 
-    private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+    private ComptabiliteManagerImpl comptabiliteManager;
+
+    private ComptabiliteDao comptabiliteDao;
+    private DaoProxy daoProxy;
+    private TransactionManager transactionManager;
+
+    @Before
+    public void init() {
+    	// comptabiliteDao
+    	comptabiliteDao = Mockito.mock(ComptabiliteDaoImpl.class);
+    	// daoProxy
+    	daoProxy = Mockito.mock(DaoProxy.class);
+    	Mockito.when(daoProxy.getComptabiliteDao()).thenReturn(comptabiliteDao);
+    	// transactionManager
+    	transactionManager = Mockito.mock(TransactionManager.class);
+    	
+    	// comptabiliteManager
+    	comptabiliteManager =  new ComptabiliteManagerImpl();
+    	// configuration
+    	ComptabiliteManagerImpl.configure(Mockito.mock(BusinessProxyImpl.class), daoProxy, transactionManager);
+    }
 
     private EcritureComptable buildEcritureComptable(String libelle, String reference, Date date, JournalComptable journal) {
     	EcritureComptable ecritureComptable = new EcritureComptable();
@@ -41,7 +78,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // ========== ERROR
@@ -63,7 +100,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(null, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     // === Libelle null
@@ -81,7 +118,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     // === Libellé vide
@@ -99,7 +136,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, ""), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     // === Libellé trop grand : > 150
@@ -122,7 +159,7 @@ public class ComptabiliteManagerImplTest {
         				new BigDecimal(123)
     				)
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === null
@@ -140,7 +177,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(null, "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // ===== LIBELLE
@@ -160,7 +197,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), null, null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === vide
@@ -178,7 +215,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === trop grand : > 200
@@ -202,7 +239,7 @@ public class ComptabiliteManagerImplTest {
         				new BigDecimal(123)
     				)
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // ===== DEBIT ET CREDIT
@@ -222,7 +259,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123.001))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === 13 chiffres avant la virgule 
@@ -240,7 +277,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(12345678901234.00))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
 
@@ -258,7 +295,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(1, "CompteA"), "Debit X", new BigDecimal(12345678901234.00), new BigDecimal(12345678901234.00))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Libelle too long > 200
@@ -277,7 +314,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Libelle null
@@ -295,7 +332,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Libelle empty
@@ -313,7 +350,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Date null
@@ -331,7 +368,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Pattern de la référence non ok
@@ -349,7 +386,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // ===== JOURNAL COMPTABLE
@@ -369,7 +406,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === code vide
@@ -387,7 +424,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === code trop long : > 5
@@ -405,7 +442,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === libellé null
@@ -423,7 +460,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === libellé vide
@@ -441,7 +478,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     // === libellé trop long > 150
@@ -460,7 +497,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Journal comptable null
@@ -478,7 +515,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Règle comptabilite 2 : les lignes écritures doivent s'équilibrer
@@ -496,7 +533,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Règle comptabilite 3 : il doit y avoir au moins une ligne au crédit et une ligne au débit
@@ -514,7 +551,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, null)
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     
     // === Règle comptabilite 5 : Format et contenu de la référence
@@ -533,7 +570,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, null)
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
     // = La référence ne correspond pas a l'année
     @Test(expected = FunctionalException.class)
@@ -550,7 +587,132 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture().add(
         		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, null)
 		);
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        comptabiliteManager.checkEcritureComptableUnit(vEcritureComptable);
     }
 
+    @Test
+    public void testGetListCompteComptable() {
+    	List<CompteComptable> ccList = new ArrayList<>();
+    	
+    	Mockito.when(comptabiliteDao.getListCompteComptable()).thenReturn(ccList);
+    	assertSame(ccList, comptabiliteManager.getListCompteComptable());
+    }
+    
+    @Test
+    public void testGetListJournalComptable() {
+    	List<JournalComptable> jcList = new ArrayList<>();
+    	
+    	Mockito.when(comptabiliteDao.getListJournalComptable()).thenReturn(jcList);
+    	assertSame(jcList, comptabiliteManager.getListJournalComptable());
+    }
+    
+    @Test
+    public void testGetListEcritureComptable() {
+    	List<EcritureComptable> ecList = new ArrayList<>();
+
+    	Mockito.when(comptabiliteDao.getListEcritureComptable()).thenReturn(ecList);
+    	assertSame(ecList, comptabiliteManager.getListEcritureComptable());
+    }
+    
+    @Test 
+    public void testAddReference() throws NotFoundException {
+    	JournalComptable jc = new JournalComptable("AC", "Achat");
+    	EcritureComptable ec = new EcritureComptable();
+    	ec.setDate(new Date(2019, 1, 1));
+    	ec.setJournal(jc);
+    	
+    	SequenceEcritureComptable sec = new SequenceEcritureComptable();
+    	sec.setAnnee(2019);
+    	sec.setDerniereValeur(1);
+    	sec.setJournalComptable(jc);
+    	
+    	Mockito.when(comptabiliteDao.getSequenceEcritureComptableByJournalCodeAndAnnee("AC", 2019)).thenReturn(sec);
+    	
+    	comptabiliteManager.addReference(ec);
+    	Mockito.verify(comptabiliteDao).updateSequenceEcritureComptable(sec);
+    	assertEquals("AC-2019/00002", ec.getReference());
+    }
+    
+    @Test
+    public void testAddReferenceNew() throws NotFoundException {
+    	JournalComptable jc = new JournalComptable("AC", "Achat");
+    	EcritureComptable ec = new EcritureComptable();
+    	ec.setDate(new Date(2019, 1, 1));
+    	ec.setJournal(jc);
+    	
+    	Mockito.when(comptabiliteDao.getSequenceEcritureComptableByJournalCodeAndAnnee("AC", 2019)).thenThrow(NotFoundException.class);
+    	
+    	comptabiliteManager.addReference(ec);
+    	assertEquals("AC-2019/00001", ec.getReference());
+    }
+    
+    @Test
+    public void testCheckEcritureComptableOK() throws NotFoundException, FunctionalException {
+        // Ecriture comptable valide
+    	EcritureComptable vEcritureComptable = buildEcritureComptable(
+        		"Libelle",
+        		"AC-2019/00001",
+        		new Date(2019, 04, 05),
+        		new JournalComptable("AC", "Achat"));
+        
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(1, "CompteA"), "Debit X", new BigDecimal(123), null)
+		);
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
+		);
+        // Unicité de l'écriture comptable
+        Mockito.when(comptabiliteDao.getEcritureComptableByRef("AC-2019/00001")).thenThrow(NotFoundException.class);
+        
+    	comptabiliteManager.checkEcritureComptable(vEcritureComptable);
+    }
+    
+    @Test(expected = FunctionalException.class)
+    public void testCheckEcritureComptableKONotValid() throws NotFoundException, FunctionalException {
+        // Ecriture comptable NON valide
+        EcritureComptable vEcritureComptable = buildEcritureComptable(
+        		"Libelle",
+        		"AC-2019/00001",
+        		new Date(2019, 04, 05),
+        		new JournalComptable("AC", "Achat"));
+        
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(1, "CompteA"), "Debit X", new BigDecimal(123), null)
+		);
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(null, "CompteB"), "Credit X", null, new BigDecimal(123))
+		);
+        
+    	comptabiliteManager.checkEcritureComptable(vEcritureComptable);
+    }
+    
+    @Test(expected = FunctionalException.class)
+    public void testCheckEcritureComptableKONotUnique() throws NotFoundException, FunctionalException {
+        // Ecriture comptable valide
+    	EcritureComptable vEcritureComptable = buildEcritureComptable(
+        		"Libelle",
+        		"AC-2019/00001",
+        		new Date(2019, 04, 05),
+        		new JournalComptable("AC", "Achat"));
+        
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(1, "CompteA"), "Debit X", new BigDecimal(123), null)
+		);
+        vEcritureComptable.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
+		);
+        vEcritureComptable.setId(1);
+
+        // NON unicité de l'écriture comptable
+    	EcritureComptable vEcritureComptableB = buildEcritureComptable(
+        		"LibelleB",
+        		"AC-2019/00001",
+        		null,
+        		null);
+
+    	vEcritureComptableB.setId(2);
+        Mockito.when(comptabiliteDao.getEcritureComptableByRef("AC-2019/00001")).thenReturn(vEcritureComptableB);
+        
+    	comptabiliteManager.checkEcritureComptable(vEcritureComptable);
+    }
 }

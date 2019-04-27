@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
@@ -25,7 +26,7 @@ public class ComptabiliteDaoImplTest {
 	
 	// === Ecriture comptable ID
 	private static final int EC_ID_OK = -1;
-	private static final int EC_ID_KO = 1;
+	private static final int EC_ID_KO = 2;
 	private static final Integer EC_ID_NEW = 1;
 	// === Ecriture comptable REF
 	private static final String EC_REF_OK = "AC-2016/00001";

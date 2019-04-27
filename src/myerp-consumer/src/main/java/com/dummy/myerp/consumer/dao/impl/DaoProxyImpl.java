@@ -30,7 +30,7 @@ public final class DaoProxyImpl implements DaoProxy {
     /**
      * Constructeur.
      */
-    private DaoProxyImpl() {
+    public DaoProxyImpl() {
         super();
     }
 
