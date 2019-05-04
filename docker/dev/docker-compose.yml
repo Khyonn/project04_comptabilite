@@ -6,7 +6,9 @@ services:
       - "127.0.0.1:9032:5432"
     volumes:
 #      - "./data/db:/var/lib/postgresql/data"
-       - "./init/db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d"
+       - "./init/db/docker-entrypoint-initdb.d/01_create_schema.sql:/docker-entrypoint-initdb.d/01_create_schema.sql"
+       - "./init/db/docker-entrypoint-initdb.d/02_create_tables.sql:/docker-entrypoint-initdb.d/02_create_tables.sql"
+       - "./init/db/docker-entrypoint-initdb.d/21_insert_data_demo.sql:/docker-entrypoint-initdb.d/21_insert_data_demo.sql"
     environment:
       - POSTGRES_DB=db_myerp
       - POSTGRES_USER=usr_myerp
