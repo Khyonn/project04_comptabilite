@@ -29,8 +29,8 @@ import com.dummy.myerp.technical.exception.TechnicalException;
  * Comptabilite manager implementation.
  */
 public class ComptabiliteManagerImpl extends AbstractBusinessManager implements ComptabiliteManager {
-	private final static String JOURNAL_SEP = "-";
-	private final static String REF_SEP = "/";
+	private static final String JOURNAL_SEP = "-";
+	private static final String REF_SEP = "/";
 
     // ==================== Attributs ====================
 
@@ -40,6 +40,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * Instantiates a new Comptabilite manager.
      */
     public ComptabiliteManagerImpl() {
+        // Default constructor
     }
 
 

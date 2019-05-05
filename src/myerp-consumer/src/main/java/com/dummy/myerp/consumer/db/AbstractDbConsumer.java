@@ -54,7 +54,7 @@ public abstract class AbstractDbConsumer {
      * @return SimpleJdbcTemplate
      */
     protected DataSource getDataSource(DataSourcesEnum pDataSourceId) {
-        DataSource vRetour = this.mapDataSource.get(pDataSourceId);
+        DataSource vRetour = mapDataSource.get(pDataSourceId);
         if (vRetour == null) {
             throw new UnsatisfiedLinkError("La DataSource suivante n'a pas été initialisée : " + pDataSourceId);
         }
@@ -78,9 +78,8 @@ public abstract class AbstractDbConsumer {
 
         JdbcTemplate vJdbcTemplate = new JdbcTemplate(getDataSource(pDataSourcesId));
         String vSeqSQL = "SELECT last_value FROM " + pSeqName;
-        T vSeqValue = vJdbcTemplate.queryForObject(vSeqSQL, pSeqValueClass);
 
-        return vSeqValue;
+        return vJdbcTemplate.queryForObject(vSeqSQL, pSeqValueClass);
     }
 
 
