@@ -1,6 +1,7 @@
 package com.dummy.myerp.model.bean.comptabilite;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Assert;
@@ -64,5 +65,24 @@ public class EcritureComptableTest {
 		vEcriture.getListLigneEcriture().add(this.createLigne(1, null, "350"));
 		vEcriture.getListLigneEcriture().add(vLigneEcritureComptable);
 		Assert.assertEquals(new BigDecimal("500.00"), vEcriture.getTotalCredit());
+	}
+	
+	@Test
+	public void testGetterSetter() {
+		EcritureComptable ec = new EcritureComptable();
+		JournalComptable jc = new JournalComptable();
+		Date d = new Date();
+		
+		ec.setDate(d);
+		ec.setId(1);
+		ec.setJournal(jc);
+		ec.setLibelle("AnyLibelle");
+		ec.setReference("AnyReference");
+		
+		Assert.assertSame(d, ec.getDate());
+		Assert.assertSame(jc, ec.getJournal());
+		Assert.assertEquals(1, ec.getId().intValue());
+		Assert.assertEquals("AnyLibelle", ec.getLibelle());
+		Assert.assertEquals("AnyReference", ec.getReference());
 	}
 }

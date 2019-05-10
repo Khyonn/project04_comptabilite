@@ -31,4 +31,21 @@ public class JournalComptableTest {
 	public void testGetByCodeNotFound() {
 		Assert.assertNull(JournalComptable.getByCode(this.getList(), "A"));
 	}
+	
+	@Test
+	public void testDefaultConstructor() {
+		JournalComptable jc = new JournalComptable();
+
+		Assert.assertNull(jc.getCode());
+		Assert.assertNull(jc.getLibelle());
+	}
+	
+	@Test
+	public void testToString() {
+		JournalComptable jc = new JournalComptable();
+		jc.setCode("AnyCode");
+		jc.setLibelle("AnyLibelle");
+		
+		Assert.assertEquals("JournalComptable{code='AnyCode', libelle='AnyLibelle'}", jc.toString());
+	}
 }

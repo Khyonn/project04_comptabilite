@@ -31,4 +31,14 @@ public class CompteComptableTest {
 	public void testGetByNumeroNotFound() {
 		Assert.assertNull(CompteComptable.getByNumero(this.getList(), 2));
 	}
+	
+	@Test
+	public void testGetterSetter() {
+		CompteComptable cc = new CompteComptable();
+		cc.setLibelle("AnyLibelle");
+		cc.setNumero(1);
+		
+		Assert.assertEquals("AnyLibelle", cc.getLibelle());
+		Assert.assertEquals(1, cc.getNumero().intValue());
+	}
 }

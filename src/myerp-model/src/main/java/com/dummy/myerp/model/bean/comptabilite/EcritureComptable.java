@@ -128,8 +128,7 @@ public class EcritureComptable {
 	public boolean isEquilibree() {
 		// Issue technique, 250 et 250.0 ne sont pas égaux, il faut donc tester la
 		// différence
-		boolean vRetour = this.getTotalDebit().compareTo(this.getTotalCredit()) == 0;
-		return vRetour;
+		return this.getTotalDebit().compareTo(this.getTotalCredit()) == 0;
 	}
 
 	// ==================== Méthodes ====================
