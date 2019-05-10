@@ -14,10 +14,12 @@ public class LigneEcritureComptableTest {
 		
 		
 		lec.setCompteComptable(cc);
+		lec.setLibelle("AnyLibelle");
 		lec.setCredit(BigDecimal.valueOf(20.00));
 		lec.setDebit(BigDecimal.valueOf(0.00));
 		
 		assertEquals(cc, lec.getCompteComptable());
+		assertEquals("AnyLibelle", lec.getLibelle());
 		assertEquals(0, lec.getCredit().compareTo(BigDecimal.valueOf(20.00)));
 		assertEquals(0, lec.getDebit().compareTo(BigDecimal.valueOf(0.00)));
 	}
