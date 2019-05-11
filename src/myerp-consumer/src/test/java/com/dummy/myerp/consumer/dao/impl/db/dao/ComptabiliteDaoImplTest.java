@@ -1,5 +1,6 @@
 package com.dummy.myerp.consumer.dao.impl.db.dao;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +12,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
+import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +41,7 @@ public class ComptabiliteDaoImplTest {
 	// === JOURNAL
 	private static final String JOURNAL_CODE = "AC";
 	private static final String JOURNAL_LIBELLE = "Achat";
+	private static final int EXISTING_COMPTE_COMPTABLE_ID = 606;
 	
 	private ComptabiliteDao comptabiliteDao = ComptabiliteDaoImpl.getInstance();
 	
@@ -85,16 +89,29 @@ public class ComptabiliteDaoImplTest {
 	}
 	
 	@Test
-	public void testInsertEcritureComptable() {
+	public void testInsertEcritureComptable() throws NotFoundException {
 		EcritureComptable ec = new EcritureComptable();
 		Date date = new Date();
 		ec.setJournal(new JournalComptable(JOURNAL_CODE, JOURNAL_LIBELLE));
 		ec.setDate(date);
 		ec.setReference(JOURNAL_CODE + "-" + date.getYear() + "/00001");
 		ec.setLibelle("Plop");
+
+		// Ajout d'une ligne ecriture comptable
+		CompteComptable cc = new CompteComptable();
+		LigneEcritureComptable lec = new LigneEcritureComptable();
+		cc.setNumero(EXISTING_COMPTE_COMPTABLE_ID);
+		lec.setCompteComptable(cc);
+		lec.setCredit(BigDecimal.valueOf(20.00));
+		lec.setLibelle("Test credit X");
+		ec.getListLigneEcriture().add(lec);
 		
 		comptabiliteDao.insertEcritureComptable(ec);
 		Assert.assertEquals(EC_ID_NEW, ec.getId());
+
+		// Test insertion lignes ecriture
+		EcritureComptable databaseEc = comptabiliteDao.getEcritureComptable(EC_ID_NEW);
+		Assert.assertEquals("Test credit X", databaseEc.getListLigneEcriture().get(0).getLibelle());
 	}
 	
 	@Test
