@@ -715,4 +715,40 @@ public class ComptabiliteManagerImplTest {
         
     	comptabiliteManager.checkEcritureComptable(vEcritureComptable);
     }
+    
+    @Test
+    public void testInsertEcritureComptable() throws FunctionalException, NotFoundException {
+        // Ecriture comptable valide
+    	EcritureComptable ec = buildEcritureComptable(
+        		"Libelle",
+        		"AC-2019/00001",
+        		new Date(2019, 04, 05),
+        		new JournalComptable("AC", "Achat"));
+        
+        ec.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(1, "CompteA"), "Debit X", new BigDecimal(123), null)
+		);
+        ec.getListLigneEcriture().add(
+        		new LigneEcritureComptable(new CompteComptable(2, "CompteB"), "Credit X", null, new BigDecimal(123))
+		);
+        // Unicité de l'écriture comptable
+        Mockito.when(comptabiliteDao.getEcritureComptableByRef("AC-2019/00001")).thenThrow(NotFoundException.class);
+    	
+    	comptabiliteManager.insertEcritureComptable(ec);
+    	Mockito.verify(comptabiliteDao).insertEcritureComptable(ec);
+    }
+    
+    @Test
+    public void testUpdateEcritureComptable() throws FunctionalException {
+    	EcritureComptable ec = new EcritureComptable();
+    	
+    	comptabiliteManager.updateEcritureComptable(ec);
+    	Mockito.verify(comptabiliteDao).updateEcritureComptable(ec);
+    }
+    
+    @Test
+    public void testDeleteEcritureComptable() {
+    	comptabiliteManager.deleteEcritureComptable(1);
+    	Mockito.verify(comptabiliteDao).deleteEcritureComptable(1);
+    }
 }
