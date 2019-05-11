@@ -7,7 +7,7 @@
     *   `dev` : environnement de développement
 *   `src` : code source de l'application
 
-
+ 
 ## Environnement de développement
 
 Les composants nécessaires lors du développement sont disponibles via des conteneurs _docker_.
