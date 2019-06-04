@@ -19,7 +19,7 @@ import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:com/dummy/myerp/consumer/applicationContext.xml")
+@ContextConfiguration("classpath:com/dummy/myerp/consumer/testApplicationContext.xml")
 public class ComptabiliteDaoImplTest {
 	// === Taille des listes
 	private static final int COMPTE_COMPTABLE_NB = 7;
