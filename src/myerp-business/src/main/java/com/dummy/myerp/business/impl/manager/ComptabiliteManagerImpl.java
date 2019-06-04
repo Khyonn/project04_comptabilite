@@ -83,10 +83,11 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
     /**
      * {@inheritDoc}
+     * @throws FunctionalException 
      */
     @SuppressWarnings("deprecation")
     @Override
-    public synchronized void addReference(EcritureComptable pEcritureComptable) {
+    public synchronized void addReference(EcritureComptable pEcritureComptable) throws FunctionalException {
     	SequenceEcritureComptable sequenceEcritureComptable;
     	try {
     		// 1) Remonter la derniere valeur de la séquence
@@ -99,7 +100,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 			// 3) Référence
 			pEcritureComptable.setReference(getEcritureComptableReference(sequenceEcritureComptable));
 			// 4) Update de la séquence écriture comptable
-			this.getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(sequenceEcritureComptable);
+			updateSequenceEcritureComptable(sequenceEcritureComptable);
 		} catch (NotFoundException e) {
 			// 2) Dernière valeur = 1
 			sequenceEcritureComptable = new SequenceEcritureComptable();
@@ -109,7 +110,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 			// 3) Référence
 			pEcritureComptable.setReference(getEcritureComptableReference(sequenceEcritureComptable));
 			// 4) Insertion de la séquence en BDD
-			this.getDaoProxy().getComptabiliteDao().createSequenceEcritureComptable(sequenceEcritureComptable);
+			insertSequenceEcritureComptable(sequenceEcritureComptable);
 		}
     }
 
@@ -216,6 +217,33 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     }
 
     /**
+     * 
+     */
+    private void insertSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable) throws FunctionalException {
+        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+        try {
+        	getDaoProxy().getComptabiliteDao().createSequenceEcritureComptable(pSequenceEcritureComptable);
+            getTransactionManager().commitMyERP(vTS);
+            vTS = null;
+        } finally {
+            getTransactionManager().rollbackMyERP(vTS);
+        }
+    }
+
+    /**
+     */
+    private void updateSequenceEcritureComptable(SequenceEcritureComptable pSequenceEcritureComptable) throws FunctionalException {
+        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+        try {
+        	getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(pSequenceEcritureComptable);
+            getTransactionManager().commitMyERP(vTS);
+            vTS = null;
+        } finally {
+            getTransactionManager().rollbackMyERP(vTS);
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -236,6 +264,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      */
     @Override
     public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
+        this.checkEcritureComptable(pEcritureComptable);
         TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
         try {
             getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
